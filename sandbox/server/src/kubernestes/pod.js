@@ -6,11 +6,31 @@ export const createPod = async (sandboxId) => {
         metadata: {
             name: `sandbox-pod-${sandboxId}`,
             labels: {   
-                app: 'sandbox-runtime',
+                app: 'sandbox',
                 sandboxId: sandboxId
             }
         },
         spec: {
+            volumes: [
+                {
+                    name: 'workspace-volume',
+                    emptyDir: {}
+                }
+            ],
+            initContainers: [
+                {
+                    name: 'init-container',
+                    image: 'template',
+                    imagePullPolicy: 'IfNotPresent',
+                    command: ['sh', '-c', 'cp -r /workspace/. /seed/'],
+                    volumeMounts: [
+                        {
+                            name: 'workspace-volume',
+                            mountPath: '/seed'
+                        }
+                    ]
+                }
+            ],
             containers: [
                 {
                     name: 'sandbox-container',
@@ -25,13 +45,41 @@ export const createPod = async (sandboxId) => {
                     resources: {
                         limits: {
                             cpu: '500m',
-                            memory: '1Gi'
+                            memory: '512Mi'
                         },
                         requests: {
-                            cpu: '250m',
-                            memory: '500Mi'
+                            cpu: '100m',
+                            memory: '128Mi'
                         }
-                    }
+                    },
+                    volumeMounts: [
+                        {
+                            name: 'workspace-volume',
+                            mountPath: '/workspace'
+                        }
+                    ]
+                },
+                {
+                    image: 'agent',
+                    imagePullPolicy: 'IfNotPresent',
+                    name: 'agent-container',
+                    ports: [ {containerPort: 3000, name: "agent-http"} ],
+                    resources: {
+                        limits: {
+                            cpu: '500m',
+                            memory: '512Mi'
+                        },
+                        requests: {
+                            cpu: '100m',
+                            memory: '128Mi'
+                        }
+                    },
+                    volumeMounts: [
+                        {
+                            name: 'workspace-volume',
+                            mountPath: '/workspace'
+                        }
+                    ]
                 }
             ]
         }

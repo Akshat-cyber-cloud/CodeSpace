@@ -5,13 +5,13 @@ export const createService = async (sandboxId) => {
         metadata: {
             name: `sandbox-service-${sandboxId}`,
             labels: {
-                app: 'sandbox', 
+                app: 'sandbox-runtime', 
                 sandboxId: sandboxId
             }
         },
         spec: {
             selector: {
-                app: 'sandbox-runtime',
+                app: 'sandbox',
                 sandboxId: sandboxId
             },
             ports: [
@@ -19,6 +19,12 @@ export const createService = async (sandboxId) => {
                     name: "http",
                     port: 80,
                     targetPort: 5173,
+                    protocol: "TCP"
+                },
+                {
+                    name: "agent-http",
+                    port: 3000,
+                    targetPort: 3000,
                     protocol: "TCP"
                 }
             ],
