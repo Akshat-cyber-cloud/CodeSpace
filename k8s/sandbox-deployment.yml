@@ -19,6 +19,11 @@ spec:
       - image: sandbox:latest
         imagePullPolicy: Always
         name:  main-sandbox-container
+        env:
+        - name: IMAGE_NAME_template
+          value: template
+        - name: IMAGE_NAME_agent
+          value: agent
         resources:
           limits: 
             cpu: "500m"

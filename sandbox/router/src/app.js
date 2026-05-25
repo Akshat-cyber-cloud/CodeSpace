@@ -21,7 +21,7 @@ app.get('/api/status/readyz', (req, res) => {
 const proxies = {};
 const agentProxies = {};
 
-function getProxy(sandboxId) {
+export function getProxy(sandboxId) {
     if(!proxies[sandboxId]) {
         proxies[sandboxId] = createProxyMiddleware({
             target: `http://sandbox-service-${sandboxId}`,
@@ -32,7 +32,7 @@ function getProxy(sandboxId) {
     return proxies[sandboxId];
 }
 
-function getAgentProxy(sandboxId) {
+export function getAgentProxy(sandboxId) {
 
     if(!agentProxies[sandboxId]) {
         agentProxies[sandboxId] = createProxyMiddleware({

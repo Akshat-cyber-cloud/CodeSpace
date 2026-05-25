@@ -9,7 +9,8 @@ agentRouter.post("/invoke", async (req, res) => {
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive'
+        'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no'
     });
 
     // Send heartbeat every 5 seconds to prevent idle/timeout disconnects
@@ -27,7 +28,21 @@ agentRouter.post("/invoke", async (req, res) => {
     try {
         const stream = await agent.stream(
             { messages: [ { role: "user", content: message } ] },
-            { context: { projectId, writer }, streamMode: "values", timeout: 120000 }
+            {
+                context: { projectId, writer },
+                streamMode: "values",
+                timeout: 120000,
+                callbacks: [
+                    {
+                        handleLLMNewToken(token) {
+                            // Only stream the token if it's not empty
+                            if (token) {
+                                writer(token);
+                            }
+                        }
+                    }
+                ]
+            }
         );
 
         let lastState = null;
