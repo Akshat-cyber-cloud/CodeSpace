@@ -26,8 +26,8 @@ const sendRequest = async (method, projectId, path, payload = null) => {
         const hostHeader = parsedUrl.host; // e.g., "019e5b5c-af54-7539-adb1-662319100b5a.agent.localhost"
         config.headers['Host'] = hostHeader;
         
-        // Rewrite the URL to point to localhost (127.0.0.1) on port 80 (ingress)
-        parsedUrl.hostname = '127.0.0.1';
+        // Rewrite the URL to point to the router-service on port 80 (internal k8s routing)
+        parsedUrl.hostname = 'router-service';
         parsedUrl.port = ''; // default port 80
         config.url = parsedUrl.toString();
     }
@@ -37,12 +37,21 @@ const sendRequest = async (method, projectId, path, payload = null) => {
 
 export const listFiles = tool(
     async ({ }, config) => {
-        const writer = config.context?.writer ?? (() => {});
-        writer("Listing files in project directory...\n");
+        const tracker = config.context?.tracker;
+        const writer = tracker?.writer ?? config.context?.writer ?? (() => {});
+
+        if (tracker) {
+            tracker.filesListed = true;
+            writer(`\n[System] 📂 Indexing workspace files...\n`);
+        } else {
+            writer("Listing files in project directory...\n");
+        }
 
         const response = await sendRequest('GET', config.context.projectId, '/list-files');
 
-        writer("Files listed successfully." + "Files: " + response.data.files.join(",") + "\n");
+        if (!tracker) {
+            writer("Files listed successfully." + "Files: " + response.data.files.join(",") + "\n");
+        }
         return JSON.stringify(response.data.files);
     },
     {
@@ -54,12 +63,21 @@ export const listFiles = tool(
 
 export const readFiles = tool(
     async ({ files = [] }, config) => {
-        const writer = config.context?.writer ?? (() => {});
-        writer("Reading files..." + files.join(",") + "\n");
+        const tracker = config.context?.tracker;
+        const writer = tracker?.writer ?? config.context?.writer ?? (() => {});
+
+        if (tracker) {
+            files.forEach(f => tracker.filesRead.add(f.replace('/workspace/', '')));
+            writer(`\n[System] 🔍 Examining files:\n${files.map(f => `   ▪ ${f.replace('/workspace/', '')}`).join('\n')}\n`);
+        } else {
+            writer("Reading files..." + files.join(",") + "\n");
+        }
 
         const response = await sendRequest('GET', config.context.projectId, '/read-files?files=' + files.join(","));
 
-        writer("Files read successfully.\n");
+        if (!tracker) {
+            writer("Files read successfully.\n");
+        }
         return JSON.stringify(response.data);
     },
     {
@@ -73,14 +91,24 @@ export const readFiles = tool(
 
 export const updateFiles = tool(
     async ({ files }, config) => {
-        const writer = config.context?.writer ?? (() => {});
-        writer("Updating files..." + files.map(f => f.file).join(",") + "\n");
+        console.log("updateFiles CALLED! files:", files.map(f => f.file), "config:", Object.keys(config), "context:", config.context);
+        const tracker = config.context?.tracker;
+        const writer = tracker?.writer ?? config.context?.writer ?? (() => {});
+
+        if (tracker) {
+            files.forEach(f => tracker.filesUpdated.add(f.file.replace('/workspace/', '')));
+            writer(`\n[System] 📝 Modifying files:\n${files.map(f => `   ▪ ${f.file.replace('/workspace/', '')}`).join('\n')}\n`);
+        } else {
+            writer("Updating files..." + files.map(f => f.file).join(",") + "\n");
+        }
 
         const response = await sendRequest('PATCH', config.context.projectId, '/update-files', {
             updates: files
         });
 
-        writer("Files updated successfully.\n");
+        if (!tracker) {
+            writer("Files updated successfully.\n");
+        }
         return JSON.stringify(response.data.results);
     },
     {

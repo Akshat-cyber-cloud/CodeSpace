@@ -3,9 +3,9 @@ import axios from 'axios';
 async function run() {
     try {
         console.log("Sending request to local AI Orchestration server...");
-        const response = await axios.post('http://localhost:3000/api/ai/invoke', {
-            projectId: "019e5b5c-af54-7539-adb1-662319100b5a",
-            message: "Complete the implementation of the Snake Game. The file `src/components/SnakeGame.jsx` is missing from the workspace, which is causing a Vite import-analysis error. Create and write the complete, polished, stateful `src/components/SnakeGame.jsx` component that links the `GameBoard`, `ScoreBoard`, and `Controls` components together."
+        const response = await axios.post('http://127.0.0.1/api/ai/invoke', {
+            projectId: "019e62e9-e88b-778c-95e6-dc514a72fd8d",
+            message: "Verify the files in the workspace. Then, create a brand new file `/workspace/src/components/MyNewVerificationComponent.jsx` that exports a simple, beautiful React component displaying 'Tracking Verified!'. Finally, list the files to verify it was successfully created."
         }, {
             responseType: 'stream'
         });

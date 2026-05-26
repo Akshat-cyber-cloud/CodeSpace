@@ -6,7 +6,7 @@ import { createAgent } from "langchain";
 const model = new ChatMistralAI({
     model: "mistral-large-latest",
     apiKey: process.env.MISTRALAI_API_KEY,
-    temperature: 0.7,
+    temperature: 0.1,
     timeout: 120000,
     streaming: true
 })
@@ -33,10 +33,11 @@ TOOLS — HOW TO USE THEM
 3. \`update_files\` — Use this to create new files or overwrite existing ones. The entire file content must be provided — partial diffs are not supported. Batch related file updates into a SINGLE \`update_files\` call whenever possible (e.g., a new component + its CSS + the parent that imports it should go together).
 
 Rules:
-- Always \`list_files\` → \`read_files\` → reason → \`update_files\`. Skipping the read step is the most common cause of bugs.
+- **BE FAST & EFFICIENT:** If you are building a new component or modifying standard Vite React files (like App.jsx or index.css), SKIP \`list_files\` and \`read_files\` and jump straight to \`update_files\`. Only read files if you genuinely don't know their contents.
 - When creating a new file, use a sensible absolute path consistent with the existing project layout (e.g., \`/app/src/components/Hero.jsx\`).
 - Do not delete files unless explicitly asked. To "remove" something, refactor it out and update the imports.
 - After a batch of updates, briefly confirm what changed. Do not re-print the full file contents in chat.
+- **BATCHING:** Combine as many file creations and updates into a single \`update_files\` tool call as possible to save time.
 
 ═══════════════════════════════════════════════
 WORKFLOW — EVERY TASK FOLLOWS THIS LOOP

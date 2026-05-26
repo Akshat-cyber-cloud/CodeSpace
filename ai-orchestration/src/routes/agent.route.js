@@ -13,8 +13,31 @@ agentRouter.post("/invoke", async (req, res) => {
         'X-Accel-Buffering': 'no'
     });
 
+    const sendSSE = (data, eventType = "message") => {
+        let payload = typeof data === 'string' ? data : JSON.stringify(data);
+        payload = payload.trim(); // MUST trim leading/trailing newlines to prevent empty data: rows
+        if (!payload) return;
+
+        let out = `event: ${eventType}\n`;
+        // Postman displays JSON objects nicely, so let's wrap text in JSON if it's not already
+        let jsonPayload;
+        try {
+            JSON.parse(payload);
+            jsonPayload = payload; // already JSON
+        } catch (e) {
+            jsonPayload = JSON.stringify({ message: payload }); // wrap in JSON
+        }
+
+        const lines = jsonPayload.split('\n');
+        for (const line of lines) {
+            out += `data: ${line}\n`;
+        }
+        out += `\n`; // single newline to terminate
+        res.write(out);
+    };
+
     // Send heartbeat every 5 seconds to prevent idle/timeout disconnects
-    const heartbeat = setInterval(() => {
+    const heartbeat = setInterval(()  => {
         res.write(': heartbeat\n\n');
     }, 5000);
 
@@ -23,25 +46,22 @@ agentRouter.post("/invoke", async (req, res) => {
         clearInterval(heartbeat);
     });
 
-    const writer = (text) => res.write(text);
+    const writer = (text) => sendSSE(text, "tool");
+
+    const tracker = {
+        filesRead: new Set(),
+        filesUpdated: new Set(),
+        filesListed: false,
+        writer
+    };
 
     try {
         const stream = await agent.stream(
             { messages: [ { role: "user", content: message } ] },
             {
-                context: { projectId, writer },
+                context: { projectId, tracker },
                 streamMode: "values",
-                timeout: 120000,
-                callbacks: [
-                    {
-                        handleLLMNewToken(token) {
-                            // Only stream the token if it's not empty
-                            if (token) {
-                                writer(token);
-                            }
-                        }
-                    }
-                ]
+                timeout: 300000 // Force LangChain/LangGraph to wait 5 minutes before aborting
             }
         );
 
@@ -57,11 +77,46 @@ agentRouter.post("/invoke", async (req, res) => {
                 const role = m.role ?? m._getType?.();
                 if ((role === 'ai' || role === 'assistant') && !m.tool_calls?.length) {
                     const content = typeof m.content === 'string' ? m.content : JSON.stringify(m.content);
-                    res.write(content + '\n');
+                    sendSSE(`🤖 Agent Response:\n${content}`, "answer");
                     break;
                 }
             }
         }
+
+        // Write a beautiful consolidated summary of files worked on
+        let summary = `==================================================\n`;
+        summary += `⚙️  WORKFLOW EXECUTION SUMMARY\n`;
+        summary += `==================================================\n\n`;
+        
+        summary += `📂 FILES LISTED:\n`;
+        if (tracker.filesListed) {
+            summary += `   ▪ Workspace files indexed successfully.\n`;
+        } else {
+            summary += `   ▪ None\n`;
+        }
+        summary += `\n`;
+
+        summary += `🔍 FILES READ & ANALYZED:\n`;
+        if (tracker.filesRead.size > 0) {
+            Array.from(tracker.filesRead).forEach(f => {
+                summary += `   ▪ ${f}\n`;
+            });
+        } else {
+            summary += `   ▪ None\n`;
+        }
+        summary += `\n`;
+
+        summary += `📝 FILES CREATED / UPDATED:\n`;
+        if (tracker.filesUpdated.size > 0) {
+            Array.from(tracker.filesUpdated).forEach(f => {
+                summary += `   ▪ ${f}\n`;
+            });
+        } else {
+            summary += `   ▪ None\n`;
+        }
+        summary += `==================================================`;
+
+        sendSSE(summary, "summary");
 
         clearInterval(heartbeat);
         res.end();
@@ -69,7 +124,7 @@ agentRouter.post("/invoke", async (req, res) => {
         clearInterval(heartbeat);
         console.error("Error invoking agent:", error);
         if (res.headersSent) {
-            res.write(`\nError during agent execution: ${error.message || error}\n`);
+            sendSSE(`Error during agent execution: ${error.message || String(error)}`, "error");
             res.end();
         } else {
             res.status(500).json({ error: "Failed to invoke agent" });
