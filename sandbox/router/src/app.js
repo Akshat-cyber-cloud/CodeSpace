@@ -44,13 +44,59 @@ export function getAgentProxy(sandboxId) {
     return agentProxies[sandboxId];
 }
 
-app.use((req, res, next) => {
-    const host = req.headers.host;
-    const sandboxId = host.split('.')[0];
+function parseFromPreviewUrl(urlStr) {
+    if (!urlStr) return null;
+    try {
+        if (!urlStr.startsWith('http://') && !urlStr.startsWith('https://')) {
+            urlStr = 'http://' + urlStr;
+        }
+        const parsed = new URL(urlStr);
+        const host = parsed.hostname;
+        const parts = host.split('.');
+        if (parts.length >= 3) {
+            return {
+                sandboxId: parts[0],
+                domainType: parts[1]
+            };
+        }
+    } catch (e) {
+        console.error('Failed to parse previewUrl:', e);
+    }
+    return null;
+}
 
-    if (host.split('.')[1] === 'agent') {
+app.use((req, res, next) => {
+    const host = req.headers.host || '';
+    
+    let sandboxId = req.query.sandboxId || req.headers['sandboxid'] || req.headers['x-sandbox-id'] || req.headers['sandbox-id'];
+    let domainType = req.query.domainType || req.headers['domaintype'] || req.headers['x-domain-type'] || req.headers['domain-type'];
+
+    const previewUrlParam = req.query.previewUrl || req.headers['previewurl'] || req.headers['preview-url'];
+    if (previewUrlParam) {
+        const parsed = parseFromPreviewUrl(previewUrlParam);
+        if (parsed) {
+            sandboxId = parsed.sandboxId;
+            domainType = parsed.domainType;
+        }
+    }
+
+    const isIP = /^(?:\d{1,3}\.){3}\d{1,3}$/.test(host.split(':')[0]);
+
+    if ((!sandboxId || !domainType) && !isIP) {
+        const parts = host.split('.');
+        if (parts.length >= 3) {
+            sandboxId = parts[0];
+            domainType = parts[1];
+        }
+    }
+
+    if (req.path.startsWith('/socket.io')) {
+        domainType = 'agent';
+    }
+
+    if (domainType === 'agent' && sandboxId) {
         return getAgentProxy(sandboxId)(req, res, next);
-    } else if (host.split('.')[1] === 'preview') {
+    } else if (domainType === 'preview' && sandboxId) {
         return getProxy(sandboxId)(req, res, next);
     }
 
