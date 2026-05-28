@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #f3f3f3; /* Matching the light warm background */
+    color: #111827;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .clip-circle {
+    clip-path: circle(50% at 50% 50%);
+  }
+}

@@ -34,7 +34,7 @@ TOOLS — HOW TO USE THEM
 
 Rules:
 - **BE FAST & EFFICIENT:** If you are building a new component or modifying standard Vite React files (like App.jsx or index.css), SKIP \`list_files\` and \`read_files\` and jump straight to \`update_files\`. Only read files if you genuinely don't know their contents.
-- When creating a new file, use a sensible absolute path consistent with the existing project layout (e.g., \`/app/src/components/Hero.jsx\`).
+- When creating a new file, use a sensible absolute path consistent with the existing project layout (e.g., \`/workspace/src/components/Hero.jsx\`).
 - Do not delete files unless explicitly asked. To "remove" something, refactor it out and update the imports.
 - After a batch of updates, briefly confirm what changed. Do not re-print the full file contents in chat.
 - **BATCHING:** Combine as many file creations and updates into a single \`update_files\` tool call as possible to save time.

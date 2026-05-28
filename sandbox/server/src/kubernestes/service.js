@@ -40,3 +40,18 @@ export const createService = async (sandboxId) => {
 
     return response;
 }
+
+export const deleteService = async (sandboxId) => {
+    const name = `sandbox-service-${sandboxId}`;
+    try {
+        await k8sCoreV1Api.deleteNamespacedService({ name, namespace: 'default' });
+        console.log(`Deleted service ${name}`);
+    } catch (e) {
+        try {
+            await k8sCoreV1Api.deleteNamespacedService(name, 'default');
+            console.log(`Deleted service ${name} (legacy API)`);
+        } catch (innerE) {
+            console.error(`Failed to delete service ${name}:`, innerE.message);
+        }
+    }
+}

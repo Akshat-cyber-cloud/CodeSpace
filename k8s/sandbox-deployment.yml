@@ -24,6 +24,10 @@ spec:
           value: template
         - name: IMAGE_NAME_agent
           value: agent
+        envFrom:
+        - secretRef:
+            name: sandbox-database
+            optional: true
         resources:
           limits: 
             cpu: "500m"

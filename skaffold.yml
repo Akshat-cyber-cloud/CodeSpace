@@ -7,6 +7,11 @@ build:
       template: "latest"
   artifacts: 
 
+  - image: auth
+    context: auth
+    docker:
+      dockerfile: dockerfile
+
   - image: ai-orchestration
     context: ai-orchestration
     docker:
@@ -39,6 +44,8 @@ build:
 
 manifests:
   rawYaml:
+  - k8s/auth-deployment.yml
+  - k8s/auth-service.yml
   - k8s/ai-deployment.yml
   - k8s/ai-service.yml
   - k8s/ingress.yml

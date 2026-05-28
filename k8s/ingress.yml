@@ -27,6 +27,34 @@ spec:
             name: router-service
             port: 
               number: 80
+      - pathType: Prefix
+        path: "/list-files"
+        backend:
+          service:
+            name: router-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: "/read-files"
+        backend:
+          service:
+            name: router-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: "/update-files"
+        backend:
+          service:
+            name: router-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: "/create-file"
+        backend:
+          service:
+            name: router-service
+            port: 
+              number: 80
 
   -  http:
       paths:
@@ -35,6 +63,13 @@ spec:
         backend:
           service:
             name: ai-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: "/api/auth"
+        backend:
+          service:
+            name: auth-service
             port: 
               number: 80
 

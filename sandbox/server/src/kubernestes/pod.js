@@ -92,3 +92,18 @@ export const createPod = async (sandboxId) => {
 
     return response;
 }
+
+export const deletePod = async (sandboxId) => {
+    const name = `sandbox-pod-${sandboxId}`;
+    try {
+        await k8sCoreV1Api.deleteNamespacedPod({ name, namespace: 'default' });
+        console.log(`Deleted pod ${name}`);
+    } catch (e) {
+        try {
+            await k8sCoreV1Api.deleteNamespacedPod(name, 'default');
+            console.log(`Deleted pod ${name} (legacy API)`);
+        } catch (innerE) {
+            console.error(`Failed to delete pod ${name}:`, innerE.message);
+        }
+    }
+}

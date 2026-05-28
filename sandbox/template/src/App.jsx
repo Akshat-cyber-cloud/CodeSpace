@@ -1,122 +1,140 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState, useEffect, useCallback } from 'react';
+import './index.css';
+
+const GRID_SIZE = 20;
+const INITIAL_SNAKE = [{ x: 10, y: 10 }];
+const INITIAL_DIRECTION = { x: 0, y: -1 };
+const INITIAL_SPEED = 150;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [snake, setSnake] = useState(INITIAL_SNAKE);
+  const [direction, setDirection] = useState(INITIAL_DIRECTION);
+  const [food, setFood] = useState({ x: 5, y: 5 });
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const generateFood = useCallback(() => {
+    let newFood;
+    while (true) {
+      newFood = {
+        x: Math.floor(Math.random() * GRID_SIZE),
+        y: Math.floor(Math.random() * GRID_SIZE)
+      };
+      if (!snake.some(segment => segment.x === newFood.x && segment.y === newFood.y)) {
+        break;
+      }
+    }
+    return newFood;
+  }, [snake]);
+
+  const resetGame = () => {
+    setSnake(INITIAL_SNAKE);
+    setDirection(INITIAL_DIRECTION);
+    setScore(0);
+    setGameOver(false);
+    setIsPaused(false);
+    setFood(generateFood());
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+          if (direction.y === 0) setDirection({ x: 0, y: -1 });
+          break;
+        case 'ArrowDown':
+        case 's':
+          if (direction.y === 0) setDirection({ x: 0, y: 1 });
+          break;
+        case 'ArrowLeft':
+        case 'a':
+          if (direction.x === 0) setDirection({ x: -1, y: 0 });
+          break;
+        case 'ArrowRight':
+        case 'd':
+          if (direction.x === 0) setDirection({ x: 1, y: 0 });
+          break;
+        case ' ':
+          setIsPaused(p => !p);
+          break;
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [direction]);
+
+  useEffect(() => {
+    if (gameOver || isPaused) return;
+
+    const moveSnake = () => {
+      setSnake(prevSnake => {
+        const head = prevSnake[0];
+        const newHead = { x: head.x + direction.x, y: head.y + direction.y };
+
+        if (
+          newHead.x < 0 || newHead.x >= GRID_SIZE ||
+          newHead.y < 0 || newHead.y >= GRID_SIZE
+        ) {
+          setGameOver(true);
+          return prevSnake;
+        }
+
+        if (prevSnake.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
+          setGameOver(true);
+          return prevSnake;
+        }
+
+        const newSnake = [newHead, ...prevSnake];
+
+        if (newHead.x === food.x && newHead.y === food.y) {
+          setScore(s => s + 10);
+          setFood(generateFood());
+        } else {
+          newSnake.pop();
+        }
+
+        return newSnake;
+      });
+    };
+
+    const interval = setInterval(moveSnake, INITIAL_SPEED);
+    return () => clearInterval(interval);
+  }, [snake, direction, gameOver, isPaused, food, generateFood]);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="game-container">
+      <h1>React Snake</h1>
+      <div className="score-board">
+        <span>Score: {score}</span>
+        {gameOver && <span className="game-over">GAME OVER</span>}
+        {isPaused && !gameOver && <span className="paused">PAUSED</span>}
+      </div>
+      
+      <div className="grid">
+        {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
+          const x = i % GRID_SIZE;
+          const y = Math.floor(i / GRID_SIZE);
+          const isSnake = snake.some(segment => segment.x === x && segment.y === y);
+          const isHead = snake[0].x === x && snake[0].y === y;
+          const isFood = food.x === x && food.y === y;
 
-      <div className="ticks"></div>
+          let cellClass = "cell";
+          if (isHead) cellClass += " snake-head";
+          else if (isSnake) cellClass += " snake-body";
+          else if (isFood) cellClass += " food";
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          return <div key={i} className={cellClass} />;
+        })}
+      </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <div className="controls">
+        <button onClick={resetGame}>Restart</button>
+        <p>Use Arrow Keys or WASD to move. Space to pause.</p>
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;

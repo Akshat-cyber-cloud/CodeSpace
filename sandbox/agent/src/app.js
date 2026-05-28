@@ -43,6 +43,10 @@ ptyProcess.onData((data) => {
     io.emit('terminal:data', data);
 })
 
+ptyProcess.onExit((code) => {
+    io.emit('terminal:exit', code);
+});
+
 io.on("connection", (socket) => {
     console.log("new user connected", socket.id);
 

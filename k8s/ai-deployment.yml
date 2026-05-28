@@ -21,12 +21,12 @@ spec:
         - name: GEMINI_API_KEY
           valueFrom:
             secretKeyRef:
-              name: ai-secrets
+              name: ai-database
               key: GEMINI_API_KEY
         - name: MISTRALAI_API_KEY
           valueFrom:
             secretKeyRef:
-              name: ai-secrets
+              name: ai-database
               key: MISTRALAI_API_KEY
         resources:
           requests:
