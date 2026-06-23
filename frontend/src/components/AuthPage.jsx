@@ -79,7 +79,7 @@ export default function AuthPage({ onBack, onLogin }) {
                 </div>
               </div>
               
-              <button type="button" className="w-full bg-[#111827] hover:bg-[#1f2937] text-white font-semibold py-3.5 rounded-xl text-sm mt-2 transition shadow-lg shadow-gray-900/10">
+              <button type="button" onClick={onLogin} className="w-full bg-[#111827] hover:bg-[#1f2937] text-white font-semibold py-3.5 rounded-xl text-sm mt-2 transition shadow-lg shadow-gray-900/10 cursor-pointer hover:scale-[1.02] active:scale-[0.98]">
                 {isSignUp ? "Create account" : "Sign in"}
               </button>
             </form>

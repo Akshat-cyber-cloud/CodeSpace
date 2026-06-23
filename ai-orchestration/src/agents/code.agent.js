@@ -7,7 +7,6 @@ const model = new ChatMistralAI({
     model: "mistral-large-latest",
     apiKey: process.env.MISTRALAI_API_KEY,
     temperature: 0.1,
-    timeout: 120000,
     streaming: true
 })
 

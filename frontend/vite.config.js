@@ -9,33 +9,33 @@ export default defineConfig({
     cors: true,
     proxy: {
       "/api": {
-        target: "http://localhost",
+        target: "http://127.0.0.1",
         changeOrigin: true,
         secure: false
       },
       "/socket.io": {
-        target: "http://localhost",
+        target: "http://127.0.0.1",
         changeOrigin: true,
         ws: true,
         secure: false
       },
       "/list-files": {
-        target: "http://localhost:8081",
+        target: "http://127.0.0.1",
         changeOrigin: true,
         secure: false
       },
       "/read-files": {
-        target: "http://localhost:8081",
+        target: "http://127.0.0.1",
         changeOrigin: true,
         secure: false
       },
       "/update-files": {
-        target: "http://localhost:8081",
+        target: "http://127.0.0.1",
         changeOrigin: true,
         secure: false
       },
       "/create-file": {
-        target: "http://localhost:8081",
+        target: "http://127.0.0.1",
         changeOrigin: true,
         secure: false
       }

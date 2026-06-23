@@ -19,16 +19,7 @@ agentRouter.post("/invoke", async (req, res) => {
         if (!payload) return;
 
         let out = `event: ${eventType}\n`;
-        // Postman displays JSON objects nicely, so let's wrap text in JSON if it's not already
-        let jsonPayload;
-        try {
-            JSON.parse(payload);
-            jsonPayload = payload; // already JSON
-        } catch (e) {
-            jsonPayload = JSON.stringify({ message: payload }); // wrap in JSON
-        }
-
-        const lines = jsonPayload.split('\n');
+        const lines = payload.split('\n');
         for (const line of lines) {
             out += `data: ${line}\n`;
         }
@@ -60,8 +51,7 @@ agentRouter.post("/invoke", async (req, res) => {
             { messages: [ { role: "user", content: message } ] },
             {
                 context: { projectId, tracker },
-                streamMode: "values",
-                timeout: 300000 // Force LangChain/LangGraph to wait 5 minutes before aborting
+                streamMode: "values"
             }
         );
 

@@ -112,7 +112,10 @@ app.get('/read-files', async (req, res) => {
     const fileList = files.split(',');
 
     const results = await Promise.all(fileList.map(async (file) => {
-        const cleanFile = file.startsWith('/') ? file.slice(1) : file;
+        let cleanFile = file.startsWith('/') ? file.slice(1) : file;
+        if (cleanFile.startsWith('workspace/')) {
+            cleanFile = cleanFile.slice(10);
+        }
         const filePath = `${WORKING_DIR}/${cleanFile}`;
 
         try {
@@ -146,7 +149,10 @@ app.patch('/update-files', async (req, res) => {
 
     const results = await Promise.all(updates.map(async (update) => {
         const { file, content } = update;
-        const cleanFile = file.startsWith('/') ? file.slice(1) : file;
+        let cleanFile = file.startsWith('/') ? file.slice(1) : file;
+        if (cleanFile.startsWith('workspace/')) {
+            cleanFile = cleanFile.slice(10);
+        }
         const filePath = `${WORKING_DIR}/${cleanFile}`;
         try {
             await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
@@ -188,7 +194,10 @@ app.post('/create-file', async (req, res) => {
             };
         }
 
-        const cleanFile = filename.startsWith('/') ? filename.slice(1) : filename;
+        let cleanFile = filename.startsWith('/') ? filename.slice(1) : filename;
+        if (cleanFile.startsWith('workspace/')) {
+            cleanFile = cleanFile.slice(10);
+        }
         const filePath = `${WORKING_DIR}/${cleanFile}`;
 
         try {

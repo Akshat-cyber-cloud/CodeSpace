@@ -1,5 +1,4 @@
-import app from './src/app.js';
-import { proxyUpgrade } from 'httpxy';
+import app, { getProxy, getAgentProxy } from './src/app.js';
 
 const server = app.listen(3000, () => {
   console.log('Sandbox Router is running on port 3000');
@@ -65,19 +64,13 @@ server.on('upgrade', (req, socket, head) => {
   }
 
   if (domainType === 'agent' && sandboxId) {
-    const target = `http://sandbox-service-${sandboxId}:3000`;
-    console.log('[Router] Proxying WebSocket upgrade to agent:', target);
-    proxyUpgrade(target, req, socket, head, { changeOrigin: true }).catch(err => {
-      console.error('[Router] WebSocket upgrade proxy failed to agent:', err);
-      socket.destroy();
-    });
+    const proxy = getAgentProxy(sandboxId);
+    console.log('[Router] Proxying WebSocket upgrade to agent');
+    proxy.upgrade(req, socket, head);
   } else if (domainType === 'preview' && sandboxId) {
-    const target = `http://sandbox-service-${sandboxId}`;
-    console.log('[Router] Proxying WebSocket upgrade to preview:', target);
-    proxyUpgrade(target, req, socket, head, { changeOrigin: true }).catch(err => {
-      console.error('[Router] WebSocket upgrade proxy failed to preview:', err);
-      socket.destroy();
-    });
+    const proxy = getProxy(sandboxId);
+    console.log('[Router] Proxying WebSocket upgrade to preview');
+    proxy.upgrade(req, socket, head);
   } else {
     console.log('[Router] UPGRADE request ignored - missing sandboxId or domainType. host:', host, 'sandboxId:', sandboxId, 'domainType:', domainType);
     socket.destroy();
