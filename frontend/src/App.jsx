@@ -4,6 +4,19 @@ import ReactMarkdown from 'react-markdown';
 import { ChevronRight, Play, Server, ExternalLink, Terminal, Cpu, Activity, Loader2, Trash2, Folder, File, Send, ArrowLeft, ChevronDown } from 'lucide-react';
 import AuthPage from './components/AuthPage';
 
+const CodeSpaceLogo = ({ className = "w-12 h-12" }) => (
+  <div className={`relative ${className} flex items-center justify-center`}>
+    <div className="absolute inset-0 bg-gradient-to-tr from-[#ea580c] to-[#ffedd5] rounded-xl blur-[6px] opacity-40" />
+    <div className="relative w-full h-full bg-[#111827] rounded-xl border border-gray-800 flex items-center justify-center shadow-lg overflow-hidden">
+      <div className="absolute top-0 right-0 w-8 h-8 bg-[#ea580c] opacity-20 blur-xl rounded-full" />
+      <svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+        <polyline points="16 18 22 12 16 6" className="text-[#ea580c]" />
+        <polyline points="8 6 2 12 8 18" />
+      </svg>
+    </div>
+  </div>
+);
+
 const MLogo = () => (
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M4 4H20V20H4V4Z" fill="white" fillOpacity="0.01" />
@@ -400,8 +413,8 @@ export default function App() {
         {/* Sidebar */}
         <div className="w-64 bg-white border-r border-gray-200 h-screen p-6 flex flex-col shadow-sm z-10">
           <div className="flex items-center gap-3 mb-10 pl-2">
-            <div className="bg-[#1c2135] text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs italic shadow-md">ACC</div>
-            <span className="font-bold text-sm tracking-tight">Akshat Cyber Cloud</span>
+            <CodeSpaceLogo className="w-8 h-8" />
+            <span className="font-bold text-sm tracking-tight text-gray-900">CodeSpace</span>
           </div>
           <div className="flex flex-col gap-1">
             <button
@@ -662,27 +675,27 @@ export default function App() {
       <div className="absolute top-8 w-full flex justify-center z-50">
         <nav className="bg-white/80 backdrop-blur-xl px-2 py-2 rounded-full flex items-center shadow-sm border border-white/50 w-full max-w-[1200px] justify-between mx-6">
           <div className="flex items-center gap-10">
-            <div className="bg-[#1c2135] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg italic shadow-md ml-1">
-              ACC
+            <div className="flex items-center gap-3">
+              <CodeSpaceLogo className="w-12 h-12 ml-1" />
+              <span className="font-bold text-base tracking-tight text-gray-900 hidden sm:block">CodeSpace</span>
             </div>
             <div className="hidden md:flex gap-8 text-[11px] font-bold tracking-widest text-gray-800">
-              <a href="#" className="hover:text-gray-500 transition">PLATFORM</a>
-              <a href="#" className="hover:text-gray-500 transition">SOLUTIONS</a>
-              <a href="#" className="hover:text-gray-500 transition">SECURITY</a>
+              <a href="#" className="hover:text-gray-500 transition">SANDBOXES</a>
+              <a href="#" className="hover:text-gray-500 transition">AI AGENTS</a>
               <a href="#" className="hover:text-gray-500 transition">DOCS</a>
             </div>
           </div>
           <div className="flex items-center gap-6">
             <div className="hidden lg:flex items-center gap-2 text-xs font-semibold">
               <span className="text-[#ea580c] text-[10px] uppercase font-bold tracking-wider">NEWS</span>
-              <span className="text-[11px] font-bold tracking-wider text-gray-800">LATEST ACC V2.0 RELEASED</span>
+              <span className="text-[11px] font-bold tracking-wider text-gray-800">LATEST CODESPACE V2.0 RELEASED</span>
               <ChevronRight className="w-3 h-3 text-gray-400" />
             </div>
             <button
               onClick={() => setShowAuth(true)}
               className="bg-white text-gray-900 font-bold text-[11px] tracking-widest px-8 py-3.5 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-gray-100 hover:bg-gray-50 transition mr-1"
             >
-              DEPLOY AGENT
+              LAUNCH CODESPACE
             </button>
           </div>
         </nav>
@@ -694,23 +707,23 @@ export default function App() {
         {/* Left Content */}
         <div className="flex flex-col items-start max-w-xl z-20 relative">
           <div className="bg-[#ea580c]/10 text-[#ea580c] px-3 py-1.5 rounded-md text-[10px] font-bold tracking-widest uppercase mb-8">
-            AI-DRIVEN CYBERSECURITY & CLOUD
+            AI-POWERED DEV SANDBOX & WORKSPACE
           </div>
 
           <h1 className="text-6xl lg:text-[72px] font-medium leading-[1.05] tracking-tight text-[#16171d] mb-6">
-            Intelligent Orchestration.<br />
-            Built for Cyber Defense.
+            Instant Sandboxes.<br />
+            Built for AI Agents.
           </h1>
 
           <p className="text-[#4b5563] text-[18px] leading-[1.6] max-w-[420px] mb-10 font-medium">
-            Deploy autonomous AI agents to monitor, manage,<br />and secure your cloud infrastructure at scale.
+            Spin up secure, containerized sandbox environments<br />to build, test, and run code with autonomous AI.
           </p>
 
           <button
             onClick={() => setShowAuth(true)}
             className="bg-[#ea580c] hover:bg-[#d04a07] text-white px-8 py-4 rounded-xl text-sm font-bold transition-all shadow-lg shadow-orange-500/20 active:scale-95"
           >
-            START FREE TRIAL
+            LAUNCH WORKSPACE
           </button>
 
           <div className="relative mt-24 w-[340px] ml-4">
@@ -728,14 +741,14 @@ export default function App() {
             </div>
 
             <div className="bg-white rounded-2xl p-7 shadow-[0_20px_40px_rgba(0,0,0,0.06)] relative z-10 border border-white">
-              <div className="text-[12px] font-bold tracking-widest text-[#16171d] mb-4">SECURITY AGENT</div>
+              <div className="text-[12px] font-bold tracking-widest text-[#16171d] mb-4">AI DEVELOPER AGENT</div>
               <p className="text-[13px] text-gray-500 font-medium mb-6 leading-relaxed">
-                Autonomous threat detection and mitigation
+                Autonomous coding, compilation, and UI generation
               </p>
               <div className="flex gap-2">
-                <span className="bg-[#f0f1f5] text-gray-600 px-2.5 py-1.5 rounded-md text-[10px] font-bold tracking-widest">SCAN</span>
-                <span className="bg-[#f0f1f5] text-gray-600 px-2.5 py-1.5 rounded-md text-[10px] font-bold tracking-widest">MONITOR</span>
-                <span className="bg-[#f0f1f5] text-gray-600 px-2.5 py-1.5 rounded-md text-[10px] font-bold tracking-widest">REMEDIATE</span>
+                <span className="bg-[#f0f1f5] text-gray-600 px-2.5 py-1.5 rounded-md text-[10px] font-bold tracking-widest">DEVELOP</span>
+                <span className="bg-[#f0f1f5] text-gray-600 px-2.5 py-1.5 rounded-md text-[10px] font-bold tracking-widest">COMPILE</span>
+                <span className="bg-[#f0f1f5] text-gray-600 px-2.5 py-1.5 rounded-md text-[10px] font-bold tracking-widest">PREVIEW</span>
               </div>
             </div>
           </div>
@@ -744,16 +757,16 @@ export default function App() {
         {/* Right Content - Stats */}
         <div className="hidden lg:flex flex-col gap-12 absolute right-32 top-[55%] transform -translate-y-1/2 z-20">
           <div>
-            <h3 className="text-[32px] font-semibold text-[#16171d] mb-1 leading-none tracking-tight">99.9%</h3>
-            <p className="text-[13px] text-gray-500 font-medium">Uptime SLA</p>
+            <h3 className="text-[32px] font-semibold text-[#16171d] mb-1 leading-none tracking-tight">&lt; 3s</h3>
+            <p className="text-[13px] text-gray-500 font-medium">Sandbox Spawn Time</p>
           </div>
           <div>
-            <h3 className="text-[32px] font-semibold text-[#16171d] mb-1 leading-none tracking-tight">50x</h3>
-            <p className="text-[13px] text-gray-500 font-medium">Faster Remediation</p>
+            <h3 className="text-[32px] font-semibold text-[#16171d] mb-1 leading-none tracking-tight">100%</h3>
+            <p className="text-[13px] text-gray-500 font-medium">Resource Isolation</p>
           </div>
           <div>
-            <h3 className="text-[32px] font-semibold text-[#16171d] mb-1 leading-none tracking-tight">0-Day</h3>
-            <p className="text-[13px] text-gray-500 font-medium">Threat Protection</p>
+            <h3 className="text-[32px] font-semibold text-[#16171d] mb-1 leading-none tracking-tight">Zero</h3>
+            <p className="text-[13px] text-gray-500 font-medium">Configuration Setup</p>
           </div>
         </div>
       </div>

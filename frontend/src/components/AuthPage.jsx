@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
+const CodeSpaceLogo = ({ className = "w-12 h-12" }) => (
+  <div className={`relative ${className} flex items-center justify-center`}>
+    <div className="absolute inset-0 bg-gradient-to-tr from-[#ea580c] to-[#ffedd5] rounded-xl blur-[6px] opacity-40" />
+    <div className="relative w-full h-full bg-[#111827] rounded-xl border border-gray-800 flex items-center justify-center shadow-lg overflow-hidden">
+      <div className="absolute top-0 right-0 w-8 h-8 bg-[#ea580c] opacity-20 blur-xl rounded-full" />
+      <svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+        <polyline points="16 18 22 12 16 6" className="text-[#ea580c]" />
+        <polyline points="8 6 2 12 8 18" />
+      </svg>
+    </div>
+  </div>
+);
+
 export default function AuthPage({ onBack, onLogin }) {
   const [isSignUp, setIsSignUp] = useState(true);
 
@@ -47,8 +60,8 @@ export default function AuthPage({ onBack, onLogin }) {
               
               <p className="text-[13px] text-gray-500 font-medium leading-relaxed">
                 {isSignUp 
-                  ? "Access your dashboard, manage infrastructure, and keep everything flowing in one place." 
-                  : "Enter your details to securely sign in to your command center."}
+                  ? "Access your dashboard, spin up sandboxes, and start building with AI in one place." 
+                  : "Enter your details to securely sign in to your CodeSpace workspace."}
               </p>
             </div>
 
@@ -132,10 +145,8 @@ export default function AuthPage({ onBack, onLogin }) {
             
             {/* Logo */}
             <div className="flex items-center gap-2 relative z-10">
-              <div className="bg-[#1c2135] text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs italic shadow-md">
-                ACC
-              </div>
-              <span className="font-bold text-base tracking-tight">Akshat Cyber Cloud</span>
+              <CodeSpaceLogo className="w-8 h-8" />
+              <span className="font-bold text-base tracking-tight">Akshat Cyber Cloud CodeSpace</span>
             </div>
 
             {/* Bottom Text */}
@@ -151,8 +162,8 @@ export default function AuthPage({ onBack, onLogin }) {
                  className="text-[34px] font-bold leading-[1.05] tracking-tight text-[#16171d]"
                >
                  {isSignUp 
-                   ? "Get access your personal hub for clarity and productivity." 
-                   : "Secure and orchestrate your autonomous infrastructure."}
+                    ? "Deploy isolated coding environments in seconds." 
+                    : "Create, test, and run code with autonomous AI."}
                </motion.h2>
             </div>
           </div>
