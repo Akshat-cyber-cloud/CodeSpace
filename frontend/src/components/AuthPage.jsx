@@ -105,7 +105,7 @@ export default function AuthPage({ onBack, onLogin }) {
 
             {/* Google option */}
             <a 
-              href="http://localhost/api/auth/google"
+              href="http://13.127.231.53.nip.io/api/auth/google"
               className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 hover:bg-gray-50 text-[#16171d] font-semibold py-3.5 rounded-xl text-sm transition cursor-pointer"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

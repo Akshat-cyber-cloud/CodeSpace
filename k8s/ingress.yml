@@ -73,7 +73,7 @@ spec:
             port: 
               number: 80
 
-  - host: "*.preview.localhost"
+  - host: "*.preview.13.127.231.53.nip.io"
     http:
       paths:
       - pathType: Prefix
@@ -84,7 +84,7 @@ spec:
             port: 
               number: 80
 
-  - host: "*.agent.localhost"
+  - host: "*.agent.13.127.231.53.nip.io"
     http:
       paths:
       - pathType: Prefix
