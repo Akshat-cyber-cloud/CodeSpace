@@ -48,10 +48,10 @@ flowchart TD
     end
 
     subgraph SERVICES["⚙️ Core Microservices (Kubernetes Pods)"]
-        AUTH["🔐 Auth Service\n(Express + Passport.js)\nGoogle OAuth 2.0 + JWT\nMongoDB"]
-        SANDBOX["🏗️ Sandbox Server\n(Express + Kubernetes Client)\nPod & Service Lifecycle Manager\nAuto-cleanup Cron Job"]
-        AI["🤖 AI Orchestration\n(Express + LangChain)\nMistral Large via SSE Streaming\n3 Tools: list / read / update files"]
-        ROUTER["🔀 Sandbox Router\n(Express + http-proxy-middleware)\nDynamic Sub-domain Proxy\nWebSocket Upgrade Handling"]
+        AUTH[" Auth Service\n(Express + Passport.js)\nGoogle OAuth 2.0 + JWT\nMongoDB"]
+        SANDBOX[" Sandbox Server\n(Express + Kubernetes Client)\nPod & Service Lifecycle Manager\nAuto-cleanup Cron Job"]
+        AI[" AI Orchestration\n(Express + LangChain)\nMistral Large via SSE Streaming\n3 Tools: list / read / update files"]
+        ROUTER[" Sandbox Router\n(Express + http-proxy-middleware)\nDynamic Sub-domain Proxy\nWebSocket Upgrade Handling"]
     end
 
     subgraph DYNAMIC["🧱 Dynamically Provisioned (Per-User Pods)"]
