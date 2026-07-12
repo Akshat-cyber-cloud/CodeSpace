@@ -17,7 +17,7 @@ spec:
       serviceAccountName: resource-manager
       containers:
       - image: sandbox:latest
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name:  main-sandbox-container
         env:
         - name: IMAGE_NAME_template
