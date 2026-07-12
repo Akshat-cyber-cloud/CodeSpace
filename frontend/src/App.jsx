@@ -198,13 +198,13 @@ export default function App() {
     setIsStarting(true);
     setLogs([]);
     addLog("⚡ Initiating cloud sandbox request...");
-    addLog("📡 POST Request: http://localhost/api/sandbox/start");
+    addLog("📡 POST Request: /api/sandbox/start");
 
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-      const response = await fetch('http://localhost/api/sandbox/start', {
+      const response = await fetch('/api/sandbox/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -620,11 +620,11 @@ export default function App() {
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
                       <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Sandbox Endpoint</div>
-                      <div className="font-mono text-sm text-[#ea580c] break-all">http://localhost/api/sandbox/start</div>
+                      <div className="font-mono text-sm text-[#ea580c] break-all">http://13.127.231.53.nip.io/api/sandbox/start</div>
                     </div>
                     <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
                       <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Cluster Engine</div>
-                      <div className="text-sm font-bold text-gray-800">Docker Desktop & Kubernetes (V1.28)</div>
+                      <div className="text-sm font-bold text-gray-800">AWS EC2 (t3.medium) & K3s (Kubernetes)</div>
                     </div>
                   </div>
 
